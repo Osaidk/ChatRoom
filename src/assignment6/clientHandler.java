@@ -47,8 +47,8 @@ public class clientHandler extends Thread {
             String[] commands = in.split(" ");
             if (commands.length > 0) {
                 if ("quit".equalsIgnoreCase(commands[0])) {
-                    String logonNotification = " just logged off!\n";
-                    iterateUsers(username, onlineHandlers, logonNotification);
+                    String logoffNotification = " just logged off!\n";
+                    iterateUsers(username, onlineHandlers, logoffNotification);
                     break;
                 }
                 else if ("logon".equalsIgnoreCase(commands[0])) {
@@ -59,6 +59,11 @@ public class clientHandler extends Thread {
                 }
             }
         }
+        terminateConnection();
+    }
+
+
+    private void terminateConnection() throws IOException {
         removerUser();
         socket.close();
     }
