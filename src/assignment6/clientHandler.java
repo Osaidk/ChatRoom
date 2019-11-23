@@ -22,6 +22,8 @@ public class clientHandler extends Thread {
         users = new HashMap<>();
         users.put("osaid", "123456");
         users.put("elaf", "112233");
+        users.put("anas", "223344");
+
     }
 
     @Override
