@@ -92,6 +92,7 @@ public class clientHandler extends Thread {
         }
     }
 
+
     private void selfNotifyMsg(OutputStream serverCommunication, String selfNotify) throws IOException {
         for (assignment6.clientHandler clientHandler : onlineHandlers) {
             if (clientHandler!=this)
