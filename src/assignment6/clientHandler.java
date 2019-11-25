@@ -14,6 +14,7 @@ public class clientHandler extends Thread {
     private HashMap<String, String> users;
     private String username;
     private List<clientHandler> onlineHandlers;
+    private boolean loggedon = false;
 
 
     public clientHandler(Socket socket, ServerInterface serverInterface) {
@@ -64,7 +65,8 @@ public class clientHandler extends Thread {
 
 
     private void terminateConnection() throws IOException {
-        removerUser();
+        if (loggedon)
+            removerUser();
         socket.close();
     }
 
@@ -83,6 +85,8 @@ public class clientHandler extends Thread {
                 String msg = "You logged on\n";
                 serverCommunication.write(msg.getBytes());
                 onlineHandlers = serverInterface.getOnlineHandlers();
+                onlineHandlers.add(this);
+                loggedon = true;
                 String selfNotify = " is online!\n";
                 selfNotifyMsg(serverCommunication, selfNotify);
                 String logonNotification = " just logged on!\n";
