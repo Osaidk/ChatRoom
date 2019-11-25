@@ -9,12 +9,16 @@ public class clientHandler extends Thread {
 
     private Socket socket;
     private ServerInterface serverInterface;
+
+
+
     private OutputStream serverCommunication;
     private InputStream clientCommunication;
     private HashMap<String, String> users;
     private String username;
     private List<clientHandler> onlineHandlers;
     private boolean loggedon = false;
+
 
 
     public clientHandler(Socket socket, ServerInterface serverInterface) {
@@ -45,7 +49,7 @@ public class clientHandler extends Thread {
 
         String in;
         while ((in = reader.readLine()) != null) {
-            String[] commands = in.split(" ");
+            String[] commands = in.split(" ", 3);
             if (commands.length > 0) {
                 if ("quit".equalsIgnoreCase(commands[0])) {
                     String logoffNotification = " just logged off!\n";
@@ -54,6 +58,8 @@ public class clientHandler extends Thread {
                 }
                 else if ("logon".equalsIgnoreCase(commands[0])) {
                     logonService(serverCommunication, commands);
+                } else if ("send".equalsIgnoreCase(commands[0])) {
+                    sendMessage(commands);
                 } else {
                     String response = "No such command " + commands[0] + "!";
                     notification(response, clientHandler.this, "\n");
@@ -102,6 +108,19 @@ public class clientHandler extends Thread {
     }
 
 
+    private void sendMessage(String[] commands) throws IOException {
+        String user = commands[1];
+        String msgBody = commands[2] + "\n";
+        if (users.containsKey(user)) {
+            for (clientHandler clientHandler : onlineHandlers) {
+                if (user.equalsIgnoreCase(clientHandler.getUsername())) {
+                    clientHandler.serverCommunication.write((user + ": " + msgBody).getBytes());
+                }
+            }
+        } else serverCommunication.write("No such user!".getBytes());
+    }
+
+
     private void selfNotifyMsg(OutputStream serverCommunication, String selfNotify) throws IOException {
         for (assignment6.clientHandler clientHandler : onlineHandlers) {
             if (clientHandler!=this)
@@ -126,5 +145,9 @@ public class clientHandler extends Thread {
 
     private String getUserPassword(String username) {
         return users.get(username);
+    }
+
+    public String getUsername() {
+        return username;
     }
 }
