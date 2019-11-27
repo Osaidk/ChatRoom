@@ -18,6 +18,7 @@ public class clientHandler extends Thread {
     private String username;
     private List<clientHandler> onlineHandlers;
     private boolean loggedon = false;
+    private boolean loggedOffProperly = false;
 
 
 
@@ -36,7 +37,7 @@ public class clientHandler extends Thread {
         try {
             clientSocketControl();
         } catch (IOException e) {
-            System.out.println("Client Socket handling msg: " + e.getMessage());
+            System.out.println("TheClient Socket handling msg: " + e.getMessage());
         }
     }
 
@@ -46,7 +47,6 @@ public class clientHandler extends Thread {
         clientCommunication = socket.getInputStream();
         BufferedReader reader = new BufferedReader
                 (new InputStreamReader(clientCommunication));
-
         String in;
         while ((in = reader.readLine()) != null) {
             String[] commands = in.split(" ", 3);
@@ -54,6 +54,7 @@ public class clientHandler extends Thread {
                 if ("quit".equalsIgnoreCase(commands[0])) {
                     String logoffNotification = " just logged off!\n";
                     iterateUsers(username, onlineHandlers, logoffNotification);
+                    loggedOffProperly = true;
                     break;
                 }
                 else if ("logon".equalsIgnoreCase(commands[0])) {
@@ -71,8 +72,13 @@ public class clientHandler extends Thread {
 
 
     private void terminateConnection() throws IOException {
-        if (loggedon)
+        if (loggedon) {
             removerUser();
+            if (!loggedOffProperly) {
+                String logoffNotification = " just logged off!\n";
+                iterateUsers(username, onlineHandlers, logoffNotification);
+            }
+        }
         socket.close();
     }
 
@@ -114,7 +120,7 @@ public class clientHandler extends Thread {
         if (users.containsKey(user)) {
             for (clientHandler clientHandler : onlineHandlers) {
                 if (user.equalsIgnoreCase(clientHandler.getUsername())) {
-                    clientHandler.serverCommunication.write((user + ": " + msgBody).getBytes());
+                    clientHandler.serverCommunication.write((username + ": " + msgBody).getBytes());
                 }
             }
         } else serverCommunication.write("No such user!".getBytes());

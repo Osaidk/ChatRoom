@@ -21,7 +21,6 @@ public class ServerInterface extends Thread {
             while (true) {
                 Socket socket = serverSocket.accept();
                 clientHandler clientHandler = new clientHandler(socket, this);
-               // onlineHandlers.add(clientHandler);
                 clientHandler.start();
             }
         } catch (IOException e) {
