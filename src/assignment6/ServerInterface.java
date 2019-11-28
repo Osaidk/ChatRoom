@@ -10,7 +10,7 @@ public class ServerInterface extends Thread {
     private int portNum;
     private List<clientHandler> onlineHandlers = new ArrayList<>();
 
-    public ServerInterface(int portNum) {
+    ServerInterface(int portNum) {
         this.portNum = portNum;
     }
 
@@ -30,7 +30,7 @@ public class ServerInterface extends Thread {
 
 
 
-    public List<clientHandler> getOnlineHandlers() {
+    List<clientHandler> getOnlineHandlers() {
         return onlineHandlers;
     }
 }

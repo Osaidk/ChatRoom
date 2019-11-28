@@ -13,7 +13,6 @@ public class clientHandler extends Thread {
 
 
     private OutputStream serverCommunication;
-    private InputStream clientCommunication;
     private HashMap<String, String> users;
     private String username;
     private List<clientHandler> onlineHandlers;
@@ -22,7 +21,7 @@ public class clientHandler extends Thread {
 
 
 
-    public clientHandler(Socket socket, ServerInterface serverInterface) {
+    clientHandler(Socket socket, ServerInterface serverInterface) {
         this.socket = socket;
         this.serverInterface = serverInterface;
         users = new HashMap<>();
@@ -44,7 +43,7 @@ public class clientHandler extends Thread {
 
     private void clientSocketControl() throws IOException {
         serverCommunication = socket.getOutputStream();
-        clientCommunication = socket.getInputStream();
+        InputStream clientCommunication = socket.getInputStream();
         BufferedReader reader = new BufferedReader
                 (new InputStreamReader(clientCommunication));
         String in;
@@ -153,7 +152,7 @@ public class clientHandler extends Thread {
         return users.get(username);
     }
 
-    public String getUsername() {
+    private String getUsername() {
         return username;
     }
 }

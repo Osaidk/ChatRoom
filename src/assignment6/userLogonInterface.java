@@ -2,14 +2,11 @@ package assignment6;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class userLogonInterface extends JFrame {
 
     private JTextField userName = new JTextField();
     private JPasswordField userPassword = new JPasswordField();
-    JButton button = new JButton("Log On");
 
 
     @Override
@@ -17,7 +14,7 @@ public class userLogonInterface extends JFrame {
         return new Dimension(200, 150);
     }
 
-    public userLogonInterface() {
+    private userLogonInterface() {
         super("Please Log On!");
         JLabel jLabel1 = new JLabel("Enter Username: ");
         JLabel jLabel2 = new JLabel("Enter Password: ");
@@ -28,13 +25,11 @@ public class userLogonInterface extends JFrame {
         jPanel.add(userName);
         jPanel.add(jLabel2);
         jPanel.add(userPassword);
+        JButton button = new JButton("Log On");
         jPanel.add(button);
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                checkUserCreds();
-            }
-        });
+        button.addActionListener(e -> checkUserCreds());
+
+
         getContentPane().add(jPanel, BorderLayout.CENTER);
         pack();
         setLocationRelativeTo(null);

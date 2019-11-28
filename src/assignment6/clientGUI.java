@@ -6,14 +6,11 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class clientGUI extends JPanel implements clientStatus {
-    private TheClient theClient;
     private JList<String> usersList;
     private DefaultListModel<String> userListModel;
 
-    public clientGUI(TheClient theClient) {
-        this.theClient = theClient;
-        this.theClient.includeClientStatus(this);
-
+    clientGUI(TheClient theClient) {
+        theClient.includeClientStatus(this);
         userListModel = new DefaultListModel<>();
         usersList = new JList<>(userListModel);
         setLayout(new BorderLayout());

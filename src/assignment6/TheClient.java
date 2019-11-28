@@ -1,39 +1,31 @@
 package assignment6;
 
-import javax.swing.*;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class TheClient {
     private String server;
     private int portNum;
-    private Scanner scanner;
-    private Socket socket;
     private OutputStream clientStream;
-    private InputStream serverStream;
     private BufferedReader bufferedReader;
     private List<clientStatus> clientStatusList = new ArrayList<>();
     private List<clientMsgHandler> clientMsgHandlerList = new ArrayList<>();
-    private DefaultListModel<String> defaultListModel = new DefaultListModel<>();
-    private JList<String> jList = new JList<>(defaultListModel);
 
-    public TheClient(String server, int portNum) {
+    TheClient(String server, int portNum) {
         this.server = server;
         this.portNum = portNum;
-        this.scanner = new Scanner(System.in);
     }
 
 
-    public void includeClientStatus(clientStatus clientStatus) {
+    void includeClientStatus(clientStatus clientStatus) {
         clientStatusList.add(clientStatus);
         System.out.println(clientStatusList.size());
     }
 
 
-    public void sendMsgToUser(String user, String msg) {
+    void sendMsgToUser(String user, String msg) {
         String message = "send " + user + " " + msg + "\n";
         try {
             clientStream.write(message.getBytes());
@@ -43,11 +35,11 @@ public class TheClient {
     }
 
 
-    public boolean establishConnection() {
+    boolean establishConnection() {
         try {
-            socket = new Socket(server, portNum);
+            Socket socket = new Socket(server, portNum);
             clientStream = socket.getOutputStream();
-            serverStream = socket.getInputStream();
+            InputStream serverStream = socket.getInputStream();
             bufferedReader = new BufferedReader(new InputStreamReader(serverStream));
             return true;
         } catch (IOException e) {
@@ -57,7 +49,7 @@ public class TheClient {
     }
 
 
-    public boolean tryLogon(String user, String password) {
+    boolean tryLogon(String user, String password) {
         String feedback = "";
         try {
             clientStream.write(("logon " + user + " " + password + "\n").getBytes());
@@ -144,7 +136,7 @@ public class TheClient {
     }
 
 
-    public void setClientMsgHandlerList(clientMsgHandler clientMsgHandler) {
+    void setClientMsgHandlerList(clientMsgHandler clientMsgHandler) {
         clientMsgHandlerList.add(clientMsgHandler);
     }
 
