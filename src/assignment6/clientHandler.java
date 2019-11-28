@@ -9,16 +9,12 @@ public class clientHandler extends Thread {
 
     private Socket socket;
     private ServerInterface serverInterface;
-
-
-
     private OutputStream serverCommunication;
     private HashMap<String, String> users;
     private String username;
     private List<clientHandler> onlineHandlers;
     private boolean loggedon = false;
     private boolean loggedOffProperly = false;
-
 
 
     clientHandler(Socket socket, ServerInterface serverInterface) {
