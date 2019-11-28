@@ -18,7 +18,7 @@ public class ServerInterface extends Thread {
     public void run() {
         try {
             ServerSocket serverSocket = new ServerSocket(portNum);
-            while (true) {
+            while (!serverSocket.isClosed()) {
                 Socket socket = serverSocket.accept();
                 clientHandler clientHandler = new clientHandler(socket, this);
                 clientHandler.start();
