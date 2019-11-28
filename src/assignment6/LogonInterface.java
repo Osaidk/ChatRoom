@@ -3,7 +3,7 @@ package assignment6;
 import javax.swing.*;
 import java.awt.*;
 
-public class userLogonInterface extends JFrame {
+public class LogonInterface extends JFrame {
 
     private JTextField userName = new JTextField();
     private JPasswordField userPassword = new JPasswordField();
@@ -14,7 +14,7 @@ public class userLogonInterface extends JFrame {
         return new Dimension(200, 150);
     }
 
-    private userLogonInterface() {
+    private LogonInterface() {
         super("Please Log On!");
         JLabel jLabel1 = new JLabel("Enter Username: ");
         JLabel jLabel2 = new JLabel("Enter Password: ");
@@ -57,8 +57,8 @@ public class userLogonInterface extends JFrame {
     }
 
     public static void main(String[] args) {
-        userLogonInterface userLogonInterface = new userLogonInterface();
-       userLogonInterface.setVisible(true);
+        LogonInterface LogonInterface = new LogonInterface();
+       LogonInterface.setVisible(true);
     }
 
 
