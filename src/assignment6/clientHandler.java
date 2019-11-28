@@ -52,7 +52,7 @@ public class clientHandler extends Thread {
             String[] commands = in.split(" ", 3);
             if (commands.length > 0) {
                 if ("quit".equalsIgnoreCase(commands[0])) {
-                    String logoffNotification = " just logged off!\n";
+                    String logoffNotification = " offline!\n";
                     iterateUsers(username, onlineHandlers, logoffNotification);
                     loggedOffProperly = true;
                     break;
@@ -75,7 +75,7 @@ public class clientHandler extends Thread {
         if (loggedon) {
             removerUser();
             if (!loggedOffProperly) {
-                String logoffNotification = " just logged off!\n";
+                String logoffNotification = " offline!\n";
                 iterateUsers(username, onlineHandlers, logoffNotification);
             }
         }
@@ -94,14 +94,14 @@ public class clientHandler extends Thread {
             String password = commands[2];
             String userPassword = getUserPassword(username);
             if (userPassword != null && userPassword.equals(password)) {
-                String msg = "You logged on\n";
+                String msg = "You're Online!\n";
                 serverCommunication.write(msg.getBytes());
                 onlineHandlers = serverInterface.getOnlineHandlers();
                 onlineHandlers.add(this);
                 loggedon = true;
-                String selfNotify = " is online!\n";
+                String selfNotify = " online!\n";
                 selfNotifyMsg(serverCommunication, selfNotify);
-                String logonNotification = " just logged on!\n";
+                String logonNotification = " online!\n";
                 iterateUsers(username, onlineHandlers, logonNotification);
             } else {
                 String msg = "Wrong Credentials! Try again\n";
@@ -120,7 +120,7 @@ public class clientHandler extends Thread {
         if (users.containsKey(user)) {
             for (clientHandler clientHandler : onlineHandlers) {
                 if (user.equalsIgnoreCase(clientHandler.getUsername())) {
-                    clientHandler.serverCommunication.write((username + ": " + msgBody).getBytes());
+                    clientHandler.serverCommunication.write(("send " + username + " " + msgBody).getBytes());
                 }
             }
         } else serverCommunication.write("No such user!".getBytes());
@@ -128,9 +128,9 @@ public class clientHandler extends Thread {
 
 
     private void selfNotifyMsg(OutputStream serverCommunication, String selfNotify) throws IOException {
-        for (assignment6.clientHandler clientHandler : onlineHandlers) {
-            if (clientHandler!=this)
-            serverCommunication.write((clientHandler.username + selfNotify).getBytes());
+        for (clientHandler clientHandler : onlineHandlers) {
+            if (clientHandler != this)
+                serverCommunication.write((clientHandler.username + selfNotify).getBytes());
         }
     }
 
