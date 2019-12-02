@@ -5,18 +5,29 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.List;
 
-public class clientHandler extends Thread {
+/**
+ * Class client handler control commands from the user on command line or GUI
+ * Runs on a separate thread for smooth experience
+ * Overrides the Runnable method from Thread class
+ */
 
+public class clientHandler extends Thread {
     private Socket socket;
     private ServerInterface serverInterface;
     private OutputStream serverCommunication;
     private HashMap<String, String> users;
     private String username;
-    private List<clientHandler> onlineHandlers;
-    private boolean loggedon = false;
+    private List<clientHandler> onlineClients;
+    private boolean loggedOn = false;
     private boolean loggedOffProperly = false;
 
-
+    /**
+     * Constructor for the class
+     * Defines hash map values for the expected clients and their passwords
+     * Class can be modified to implement a more useful way to define expected clients
+     * @param socket reference for client socket
+     * @param serverInterface reference for server interface to obtain collection of clients
+     */
     clientHandler(Socket socket, ServerInterface serverInterface) {
         this.socket = socket;
         this.serverInterface = serverInterface;
@@ -36,7 +47,11 @@ public class clientHandler extends Thread {
         }
     }
 
-
+    /**
+     * Method controller for different user commands to the server
+     * Method also terminates and logs out a user if no longer active
+     * @throws IOException thrown if an error is encountered with input/output of server
+     */
     private void clientSocketControl() throws IOException {
         serverCommunication = socket.getOutputStream();
         InputStream clientCommunication = socket.getInputStream();
@@ -46,9 +61,9 @@ public class clientHandler extends Thread {
         while ((in = reader.readLine()) != null) {
             String[] commands = in.split(" ", 3);
             if (commands.length > 0) {
-                if ("quit".equalsIgnoreCase(commands[0])) {
+                if ("logout".equalsIgnoreCase(commands[0])) {
                     String logoffNotification = " offline!\n";
-                    iterateUsers(username, onlineHandlers, logoffNotification);
+                    iterateUsers(username, onlineClients, logoffNotification);
                     loggedOffProperly = true;
                     break;
                 }
@@ -65,24 +80,37 @@ public class clientHandler extends Thread {
         terminateConnection();
     }
 
+    /**
+     * Method terminates, closes the socket, and logs out user if no longer active
+     * @throws IOException thrown if an error is encountered with input/output of server
+     */
 
     private void terminateConnection() throws IOException {
-        if (loggedon) {
+        if (loggedOn) {
             removerUser();
             if (!loggedOffProperly) {
                 String logoffNotification = " offline!\n";
-                iterateUsers(username, onlineHandlers, logoffNotification);
+                iterateUsers(username, onlineClients, logoffNotification);
             }
         }
         socket.close();
     }
 
-
+    /**
+     * Method removes a user from list of online clients if user logs out
+     * or no longer active
+     */
     private void removerUser() {
-        onlineHandlers.remove(this);
+        onlineClients.remove(this);
     }
 
-
+    /**
+     * Method handles client log on operations
+     * Copies list of online clients for future modifications
+     * @param serverCommunication Output stream for server - client communication
+     * @param commands An array of user commands
+     * @throws IOException thrown if an error is encountered with input/output of server
+     */
     private void logonService(OutputStream serverCommunication, String[] commands) throws IOException {
         if (commands.length == 3) {
             username = commands[1];
@@ -91,13 +119,13 @@ public class clientHandler extends Thread {
             if (userPassword != null && userPassword.equals(password)) {
                 String msg = "You're Online!\n";
                 serverCommunication.write(msg.getBytes());
-                onlineHandlers = serverInterface.getOnlineHandlers();
-                onlineHandlers.add(this);
-                loggedon = true;
+                onlineClients = serverInterface.getOnlineClients();
+                onlineClients.add(this);
+                loggedOn = true;
                 String selfNotify = " online!\n";
                 selfNotifyMsg(serverCommunication, selfNotify);
                 String logonNotification = " online!\n";
-                iterateUsers(username, onlineHandlers, logonNotification);
+                iterateUsers(username, onlineClients, logonNotification);
             } else {
                 String msg = "Wrong Credentials! Try again\n";
                 serverCommunication.write(msg.getBytes());
@@ -113,7 +141,7 @@ public class clientHandler extends Thread {
         String user = commands[1];
         String msgBody = commands[2] + "\n";
         if (users.containsKey(user)) {
-            for (clientHandler clientHandler : onlineHandlers) {
+            for (clientHandler clientHandler : onlineClients) {
                 if (user.equalsIgnoreCase(clientHandler.getUsername())) {
                     clientHandler.serverCommunication.write(("send " + username + " " + msgBody).getBytes());
                 }
@@ -123,7 +151,7 @@ public class clientHandler extends Thread {
 
 
     private void selfNotifyMsg(OutputStream serverCommunication, String selfNotify) throws IOException {
-        for (clientHandler clientHandler : onlineHandlers) {
+        for (clientHandler clientHandler : onlineClients) {
             if (clientHandler != this)
                 serverCommunication.write((clientHandler.username + selfNotify).getBytes());
         }
